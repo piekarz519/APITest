@@ -11,27 +11,29 @@
     android:orientation="vertical"
     android:weightSum="1">
 
-    <TextView
-        android:layout_width="214dp"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Large Text"
-        android:textAlignment="center"
-        android:id="@+id/textView"
-        android:layout_gravity="center_horizontal"
-        android:layout_weight="0.04" />
-
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="50dp">
     <Button
-        android:layout_width="220dp"
-        android:layout_height="wrap_content"
-        android:text="New Button"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Check Weather"
         android:id="@+id/callAPI"
-        android:layout_gravity="center_horizontal"
-        android:nestedScrollingEnabled="false" />
+        android:nestedScrollingEnabled="false"
+        android:layout_weight="1"/>
+    <Spinner
+        android:layout_gravity="right"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:focusable="true"
+        android:layout_weight="1"
+        android:id="@+id/spinner"></Spinner>
+</LinearLayout>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center">
+        android:gravity="center"
+        android:layout_weight="1">
 
         <ProgressBar
             android:id="@+id/progressBar"
@@ -48,6 +50,7 @@
                 android:id="@+id/responseView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
+
         </ScrollView>
     </RelativeLayout>
 

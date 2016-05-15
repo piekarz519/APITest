@@ -1,14 +1,21 @@
 package api.piekarnia.com.apitest;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,79 +26,51 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 
-public class MainActivity extends AppCompatActivity {
-
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     TextView responseView;
     ProgressBar progressBar;
-    static final String API_KEY = "dd2adf9987792f911beec317c185ad86";
-    static final String API_URL = "api.openweathermap.org/data/2.5/weather?q=London";
+    String item;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        Spinner spinner= (Spinner)findViewById(R.id.spinner);
         responseView = (TextView) findViewById(R.id.responseView);
-
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        List<String> cities;
 
+        Cities city =new Cities();
+        cities= city.readRawTextFile(this,R.raw.cities);
+        ArrayAdapter<String> dataAdapter=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item,cities);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(dataAdapter);
         Button queryButton = (Button) findViewById(R.id.callAPI);
-
         assert queryButton != null;
+
         queryButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                new RetrieveFeedTask().execute();
-            }
-        });
+            public void onClick(View v) {new RetrieveFeedTask(MainActivity.this,item).execute();}});
+            spinner.setOnItemSelectedListener(this);
     }
 
-    class RetrieveFeedTask extends AsyncTask<Void, Void, String> {
-
-        private Exception exception;
-
-        protected void onPreExecute() {
-            progressBar.setVisibility(View.VISIBLE);
-            responseView.setText("");
-        }
-
-        protected String doInBackground(Void... urls) {
-
-            // Do some validation here
-            Log.i("INFO", "gdzies tu");
-            try {
-                URL url = new URL("http://api.openweathermap.org/data/2.5/weather?q=London&APPID=dd2adf9987792f911beec317c185ad86");
-                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-
-                try {
-                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                    StringBuilder stringBuilder = new StringBuilder();
-                    String line;
-                    while ((line = bufferedReader.readLine()) != null) {
-                        stringBuilder.append(line).append("\n");
-
-                    }
-                    bufferedReader.close();
-                    return stringBuilder.toString();
-                } finally {
-                    urlConnection.disconnect();
-                }
-            } catch (Exception e) {
-                Log.e("ERROR", e.getMessage(), e);
-                return null;
-            }
-        }
-
-        protected void onPostExecute(String response) {
-            if (response == null) {
-                response = "THERE WAS AN ERROR";
-            }
-            progressBar.setVisibility(View.GONE);
-            Log.i("INFO", response);
-            responseView.setText(response);
-        }
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        // On selecting a spinner item
+       item = parent.getItemAtPosition(position).toString();
+        // Showing selected spinner item
+        Toast.makeText(parent.getContext(), "Selected: " + item, Toast.LENGTH_LONG).show();
+    }
+    public void onNothingSelected(AdapterView<?> arg0) {
+        // TODO Auto-generated method stub
     }
 }
+
+
